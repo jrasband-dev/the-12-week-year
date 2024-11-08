@@ -4,6 +4,7 @@ import pandas as pd
 
 st.sidebar.title("12 Week Year Planner")
 page = st.sidebar.selectbox("Navigate to:", ["Vision Setting", "12 Week Goals & Tactics", "Weekly Plans"])
+checked_tactics = {}
 
 if page == "Vision Setting":
     st.title("Vision Setting")
@@ -56,6 +57,8 @@ elif page == "12 Week Goals & Tactics":
             file_name="12_week_plan.json",
             mime="application/json"
         )
+
+
 
 elif page == "Weekly Plans":
     st.title("Create Weekly Plan")
