@@ -57,39 +57,43 @@ elif page == "12 Week Goals & Tactics":
             mime="application/json"
         )
 
-elif page == "Weekly Plans":
-    st.title("Weekly Plans")
-
-    # Add input for week number
-    week_number = st.number_input("Enter the Week Number (1-12)", min_value=1, max_value=12, step=1)
-
-    # Upload JSON file
-    uploaded_file = st.file_uploader("Upload your 12 Week Plan JSON file", type="json")
+elif page == "Weekly Plan":
+    st.title("Weekly Plan")
     
-    if uploaded_file:
-        plan_data = json.load(uploaded_file)
+    # File upload widget
+    uploaded_file = st.file_uploader("Upload your 12-week plan JSON file", type="json")
+    
+    if uploaded_file is not None:
+        # Read and parse the uploaded JSON
+        plan_data = json.loads(uploaded_file.read())
         
-        # Display each goal with tactics as checkboxes based on week number and "Due" value
-        checked_tactics = {}
-        for goal_key, goal_content in plan_data.items():
-            st.subheader(goal_content["Goal"])
-            tactics = goal_content["Tactics"]
-            checked_tactics[goal_key] = []
+        # Input for week number
+        week_number = st.number_input("Enter the week number (1-12)", min_value=1, max_value=12, step=1)
+        
+        # Loop through goals and their tactics
+        for goal_id, goal_data in plan_data.items():
+            st.subheader(f"Goal {goal_id}: {goal_data['goal']}")
             
-            for tactic_data in tactics:
-                tactic = tactic_data["tactic"]
-                due = tactic_data["due"]
-                
-                # Only display tactics if they match the selected week or if they are due each week
-                if due == "each week" or f"week {week_number}" == due:
-                    is_checked = st.checkbox(tactic, key=f"{goal_key}_{tactic}")
-                    checked_tactics[goal_key].append((tactic, is_checked))
+            # Filter tactics based on week number or "each week"
+            for tactic in goal_data["tactics"]:
+                tactic_due = tactic['due']
+                # Only show tactics that match the week number or are set to "each week"
+                if tactic_due == "each week" or f"week {week_number}" == tactic_due:
+                    # Display tactic as a checkbox
+                    tactic_key = f"tactic_{goal_id}_{tactic['tactic']}"
+                    is_checked = st.checkbox(tactic['tactic'], key=tactic_key)
+                    
+                    # Store the checked status in the checked_tactics dictionary
+                    if goal_id not in checked_tactics:
+                        checked_tactics[goal_id] = []
+                    checked_tactics[goal_id].append((tactic['tactic'], is_checked))
         
-        # Convert the weekly plan to Markdown format for display with checkboxes
+        # Optionally, display a button to save the weekly plan
         if st.button("Save Weekly Plan"):
+            # Convert the weekly plan to Markdown format for display with checkboxes
             markdown_content = f"# Weekly Plan for Week {week_number}\n"
             for goal_key, tactics in checked_tactics.items():
-                markdown_content += f"## {plan_data[goal_key]['Goal']}\n"
+                markdown_content += f"## {plan_data[goal_key]['goal']}\n"
                 for tactic, completed in tactics:
                     checkbox = "[x]" if completed else "[ ]"
                     markdown_content += f"- {checkbox} {tactic}\n"
@@ -106,7 +110,7 @@ elif page == "Weekly Plans":
             # Prepare CSV export
             csv_data = []
             for goal_key, tactics in checked_tactics.items():
-                goal = plan_data[goal_key]["Goal"]
+                goal = plan_data[goal_key]["goal"]
                 for tactic, completed in tactics:
                     csv_data.append([goal, tactic, "Completed" if completed else "Incomplete"])
 
@@ -119,3 +123,6 @@ elif page == "Weekly Plans":
                 file_name=f"weekly_plan_week_{week_number}.csv",
                 mime="text/csv"
             )
+
+    else:
+        st.write("Please upload your 12-week plan JSON file to get started.")
