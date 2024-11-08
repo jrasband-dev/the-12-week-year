@@ -57,9 +57,10 @@ elif page == "12 Week Goals & Tactics":
             mime="application/json"
         )
 
-elif page == "Weekly Plan":
-    st.title("Weekly Plan")
-    
+elif page == "Weekly Plans":
+    st.title("Create Weekly Plan")
+
+    week_number = st.number_input("Enter the week number (1-12)", min_value=1, max_value=12, step=1)
     # File upload widget
     uploaded_file = st.file_uploader("Upload your 12-week plan JSON file", type="json")
     
@@ -68,7 +69,7 @@ elif page == "Weekly Plan":
         plan_data = json.loads(uploaded_file.read())
         
         # Input for week number
-        week_number = st.number_input("Enter the week number (1-12)", min_value=1, max_value=12, step=1)
+        
         
         # Loop through goals and their tactics
         for goal_id, goal_data in plan_data.items():
