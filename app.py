@@ -26,37 +26,46 @@ elif page == "12 Week Goals & Tactics":
         st.subheader(f"Goal {i}")
         goal = st.text_input(f"Set Goal {i}", key=f"goal_{i}")
         
-        # Create columns for tactic and due inputs
-        col1, col2 = st.columns(2)  # Two columns for tactic and due
-        
-        with col1:
-            tactic_1 = st.text_input(f"Tactic #1 to Achieve Goal {i}", key=f"tactic_{i}_1")
-            tactic_2 = st.text_input(f"Tactic #2 to Achieve Goal {i}", key=f"tactic_{i}_2")
-            tactic_3 = st.text_input(f"Tactic #3 to Achieve Goal {i}", key=f"tactic_{i}_3")
-        
-        with col2:
-            # Dropdown menu for Due (week)
-            due_options = ["each week"] + [f"week {i}" for i in range(1, 13)]
-            due_1 = st.selectbox(f"Due for Tactic #1 of Goal {i}", due_options, key=f"due_{i}_1")
-            due_2 = st.selectbox(f"Due for Tactic #2 of Goal {i}", due_options, key=f"due_{i}_2")
-            due_3 = st.selectbox(f"Due for Tactic #3 of Goal {i}", due_options, key=f"due_{i}_3")
+        if goal:  # Only proceed if the goal is not blank
+            # Create columns for tactic and due inputs
+            col1, col2 = st.columns(2)  # Two columns for tactic and due
+            
+            with col1:
+                tactic_1 = st.text_input(f"Tactic #1 to Achieve Goal {i}", key=f"tactic_{i}_1")
+                tactic_2 = st.text_input(f"Tactic #2 to Achieve Goal {i}", key=f"tactic_{i}_2")
+                tactic_3 = st.text_input(f"Tactic #3 to Achieve Goal {i}", key=f"tactic_{i}_3")
+            
+            with col2:
+                # Dropdown menu for Due (week)
+                due_options = ["each week"] + [f"week {i}" for i in range(1, 13)]
+                due_1 = st.selectbox(f"Due for Tactic #1 of Goal {i}", due_options, key=f"due_{i}_1")
+                due_2 = st.selectbox(f"Due for Tactic #2 of Goal {i}", due_options, key=f"due_{i}_2")
+                due_3 = st.selectbox(f"Due for Tactic #3 of Goal {i}", due_options, key=f"due_{i}_3")
 
-        # You can store the data in `goals_data` or process it as needed
-        goals_data[f"goal_{i}"] = {
-            'goal': goal,
-            'tactics': [
-                {'tactic': tactic_1, 'due': due_1},
-                {'tactic': tactic_2, 'due': due_2},
-                {'tactic': tactic_3, 'due': due_3}
-            ]
-        }
+            # Only add to goals_data if the goal is not empty
+            goals_data[i] = {
+                'goal': goal,
+                'tactics': [
+                    {'tactic': tactic_1, 'due': due_1} if tactic_1 else None,
+                    {'tactic': tactic_2, 'due': due_2} if tactic_2 else None,
+                    {'tactic': tactic_3, 'due': due_3} if tactic_3 else None
+                ]
+            }
+            
+            # Remove any tactics that are None
+            goals_data[i]['tactics'] = [tactic for tactic in goals_data[i]['tactics'] if tactic is not None]
 
-    st.download_button(
+    # Only allow download if at least one goal is present
+    if goals_data:
+        st.download_button(
             label="Export Goals & Tactics",
             data=json.dumps(goals_data, indent=4),
             file_name="12_week_plan.json",
             mime="application/json"
         )
+    else:
+        st.warning("Please fill in at least one goal to export the plan.")
+
 
 
 elif page == "Weekly Plans":
