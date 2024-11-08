@@ -29,13 +29,22 @@ elif page == "12 Week Goals & Tactics":
         tactic_2 = st.text_area(f"Tactic #2 to Achieve Goal {i}", key=f"tactic_{i}_2")
         tactic_3 = st.text_area(f"Tactic #3 to Achieve Goal {i}", key=f"tactic_{i}_3")
         
+        # Add dropdown for Due field
+        due_field = st.selectbox(
+            f"Due for Goal {i}",
+            options=["Each week", "Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10", "Week 11", "Week 12"],
+            key=f"due_{i}"
+        )
+        
         if goal:
             goals_data[f"Goal {i}"] = {
                 "Goal": goal,
-                "Tactics": [tactic_1, tactic_2, tactic_3]
+                "Tactics": [tactic_1, tactic_2, tactic_3],
+                "Due": due_field
             }
     
-    st.download_button(
+    if st.button("Export Goals & Tactics"):
+        st.download_button(
             label="Download Goals & Tactics as JSON",
             data=json.dumps(goals_data, indent=4),
             file_name="12_week_plan.json",
@@ -54,17 +63,19 @@ elif page == "Weekly Plans":
     if uploaded_file:
         plan_data = json.load(uploaded_file)
         
-        # Display each goal with tactics as checkboxes
+        # Display each goal with tactics as checkboxes, filtering by the selected week
         checked_tactics = {}
         for goal_key, goal_content in plan_data.items():
             st.subheader(goal_content["Goal"])
             tactics = goal_content["Tactics"]
+            due_date = goal_content["Due"]
             checked_tactics[goal_key] = []
             
             for tactic in tactics:
                 if tactic:  # Check if tactic text is not empty
-                    is_checked = st.checkbox(tactic, key=f"{goal_key}_{tactic}")
-                    checked_tactics[goal_key].append((tactic, is_checked))
+                    if due_date == "Each week" or due_date == f"Week {week_number}":
+                        is_checked = st.checkbox(tactic, key=f"{goal_key}_{tactic}")
+                        checked_tactics[goal_key].append((tactic, is_checked))
         
         # Convert the weekly plan to Markdown format for display with checkboxes
         if st.button("Save Weekly Plan"):
