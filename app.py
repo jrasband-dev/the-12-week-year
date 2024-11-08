@@ -50,13 +50,8 @@ elif page == "12 Week Goals & Tactics":
             ]
         }
 
-    # Optionally, display the stored data for debugging
-    st.write(goals_data)
-
-    
-    if st.button("Export Goals & Tactics"):
-        st.download_button(
-            label="Download Goals & Tactics as JSON",
+    st.download_button(
+            label="Export Goals & Tactics",
             data=json.dumps(goals_data, indent=4),
             file_name="12_week_plan.json",
             mime="application/json"
