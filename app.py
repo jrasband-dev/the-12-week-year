@@ -8,15 +8,10 @@ if page == "Vision Setting":
     st.title("Vision Setting")
     st.subheader("Define Your Long-Term Vision")
     long_term_vision = st.text_area("What's your vision for the future?")
-    
-    if st.button("Export Vision"):
-        vision_data = {
-            "Long-Term Vision": long_term_vision,
-            "12-Week Vision": vision_12_week
-        }
-        st.download_button(
+
+    st.download_button(
             label="Download Vision",
-            data=json.dumps(vision_data),
+            data=long_term_vision,
             file_name="vision.json",
             mime="application/json"
         )
@@ -39,8 +34,7 @@ elif page == "12 Week Goals & Tactics":
                 "Tactics": [tactic_1, tactic_2, tactic_3]
             }
     
-    if st.button("Export Goals & Tactics"):
-        st.download_button(
+    st.download_button(
             label="Download Goals & Tactics as JSON",
             data=json.dumps(goals_data, indent=4),
             file_name="12_week_plan.json",
@@ -71,22 +65,20 @@ elif page == "Weekly Plans":
                     is_checked = st.checkbox(tactic, key=f"{goal_key}_{tactic}")
                     checked_tactics[goal_key].append((tactic, is_checked))
         
-        # Display week number as part of the data export
+        # Convert the weekly plan to HTML format for better visualization
         if st.button("Save Weekly Plan"):
-            weekly_plan_data = {
-                "Week": week_number,
-                "Goals": {}
-            }
+            html_content = f"<h2>Weekly Plan for Week {week_number}</h2>\n"
             for goal_key, tactics in checked_tactics.items():
-                weekly_plan_data["Goals"][goal_key] = {
-                    "Goal": plan_data[goal_key]["Goal"],
-                    "Tactics": [{"Tactic": tactic, "Completed": completed} for tactic, completed in tactics]
-                }
-            
-            st.json(weekly_plan_data)
+                html_content += f"<h3>{plan_data[goal_key]['Goal']}</h3>\n<ul>"
+                for tactic, completed in tactics:
+                    checkmark = "&#10003;" if completed else "&#10007;"
+                    html_content += f"<li>{checkmark} {tactic}</li>"
+                html_content += "</ul>"
+
+            # Provide the HTML content as a downloadable file
             st.download_button(
-                label="Download Weekly Plan as JSON",
-                data=json.dumps(weekly_plan_data, indent=4),
-                file_name=f"weekly_plan_week_{week_number}.json",
-                mime="application/json"
+                label="Download Weekly Plan as HTML",
+                data=html_content,
+                file_name=f"weekly_plan_week_{week_number}.html",
+                mime="text/html"
             )
