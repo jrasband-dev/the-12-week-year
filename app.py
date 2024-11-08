@@ -34,8 +34,8 @@ elif page == "12 Week Goals & Tactics":
                 tactic_1 = st.text_input(f"Tactic #1 to Achieve Goal {i}", key=f"tactic_{i}_1")
                 tactic_2 = st.text_input(f"Tactic #2 to Achieve Goal {i}", key=f"tactic_{i}_2")
                 tactic_3 = st.text_input(f"Tactic #3 to Achieve Goal {i}", key=f"tactic_{i}_3")
-                tactic_4 = st.text_input(f"Tactic #3 to Achieve Goal {i}", key=f"tactic_{i}_4")
-                tactic_5 = st.text_input(f"Tactic #3 to Achieve Goal {i}", key=f"tactic_{i}_5")
+                tactic_4 = st.text_input(f"Tactic #4 to Achieve Goal {i}", key=f"tactic_{i}_4")
+                tactic_5 = st.text_input(f"Tactic #5 to Achieve Goal {i}", key=f"tactic_{i}_5")
             
             with col2:
                 # Dropdown menu for Due (week)
@@ -43,8 +43,8 @@ elif page == "12 Week Goals & Tactics":
                 due_1 = st.selectbox(f"Due for Tactic #1 of Goal {i}", due_options, key=f"due_{i}_1")
                 due_2 = st.selectbox(f"Due for Tactic #2 of Goal {i}", due_options, key=f"due_{i}_2")
                 due_3 = st.selectbox(f"Due for Tactic #3 of Goal {i}", due_options, key=f"due_{i}_3")
-                due_4 = st.selectbox(f"Due for Tactic #3 of Goal {i}", due_options, key=f"due_{i}_4")
-                due_5 = st.selectbox(f"Due for Tactic #3 of Goal {i}", due_options, key=f"due_{i}_5")
+                due_4 = st.selectbox(f"Due for Tactic #4 of Goal {i}", due_options, key=f"due_{i}_4")
+                due_5 = st.selectbox(f"Due for Tactic #5 of Goal {i}", due_options, key=f"due_{i}_5")
 
             # Only add to goals_data if the goal is not empty
             goals_data[i] = {
@@ -53,8 +53,8 @@ elif page == "12 Week Goals & Tactics":
                     {'tactic': tactic_1, 'due': due_1} if tactic_1 else None,
                     {'tactic': tactic_2, 'due': due_2} if tactic_2 else None,
                     {'tactic': tactic_3, 'due': due_3} if tactic_3 else None,
-                    {'tactic': tactic_4, 'due': due_3} if tactic_4 else None,
-                    {'tactic': tactic_5, 'due': due_3} if tactic_5 else None
+                    {'tactic': tactic_4, 'due': due_4} if tactic_4 else None,
+                    {'tactic': tactic_5, 'due': due_5} if tactic_5 else None
                 ]
             }
             
