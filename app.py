@@ -25,25 +25,34 @@ elif page == "12 Week Goals & Tactics":
         st.subheader(f"Goal {i}")
         goal = st.text_input(f"Set Goal {i}", key=f"goal_{i}")
         
-        tactic_1 = st.text_area(f"Tactic #1 to Achieve Goal {i}", key=f"tactic_{i}_1")
-        tactic_2 = st.text_area(f"Tactic #2 to Achieve Goal {i}", key=f"tactic_{i}_2")
-        tactic_3 = st.text_area(f"Tactic #3 to Achieve Goal {i}", key=f"tactic_{i}_3")
+        # Create columns for tactic and due inputs
+        col1, col2 = st.columns(2)  # Two columns for tactic and due
         
-        # Dropdown menu for Due (week)
-        due_options = ["each week"] + [f"week {i}" for i in range(1, 13)]
-        due_1 = st.selectbox(f"Due for Tactic #1 of Goal {i}", due_options, key=f"due_{i}_1")
-        due_2 = st.selectbox(f"Due for Tactic #2 of Goal {i}", due_options, key=f"due_{i}_2")
-        due_3 = st.selectbox(f"Due for Tactic #3 of Goal {i}", due_options, key=f"due_{i}_3")
+        with col1:
+            tactic_1 = st.text_area(f"Tactic #1 to Achieve Goal {i}", key=f"tactic_{i}_1")
+            tactic_2 = st.text_area(f"Tactic #2 to Achieve Goal {i}", key=f"tactic_{i}_2")
+            tactic_3 = st.text_area(f"Tactic #3 to Achieve Goal {i}", key=f"tactic_{i}_3")
+        
+        with col2:
+            # Dropdown menu for Due (week)
+            due_options = ["each week"] + [f"week {i}" for i in range(1, 13)]
+            due_1 = st.selectbox(f"Due for Tactic #1 of Goal {i}", due_options, key=f"due_{i}_1")
+            due_2 = st.selectbox(f"Due for Tactic #2 of Goal {i}", due_options, key=f"due_{i}_2")
+            due_3 = st.selectbox(f"Due for Tactic #3 of Goal {i}", due_options, key=f"due_{i}_3")
 
-        if goal:
-            goals_data[f"Goal {i}"] = {
-                "Goal": goal,
-                "Tactics": [
-                    {"tactic": tactic_1, "due": due_1},
-                    {"tactic": tactic_2, "due": due_2},
-                    {"tactic": tactic_3, "due": due_3}
-                ]
-            }
+        # You can store the data in `goals_data` or process it as needed
+        goals_data[i] = {
+            'goal': goal,
+            'tactics': [
+                {'tactic': tactic_1, 'due': due_1},
+                {'tactic': tactic_2, 'due': due_2},
+                {'tactic': tactic_3, 'due': due_3}
+            ]
+        }
+
+    # Optionally, display the stored data for debugging
+    st.write(goals_data)
+
     
     if st.button("Export Goals & Tactics"):
         st.download_button(
