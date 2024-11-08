@@ -8,10 +8,11 @@ if page == "Vision Setting":
     st.title("Vision Setting")
     st.subheader("Define Your Long-Term Vision")
     long_term_vision = st.text_area("What's your vision for the future?")
-
+    
     if st.button("Export Vision"):
         vision_data = {
             "Long-Term Vision": long_term_vision,
+            "12-Week Vision": vision_12_week
         }
         st.download_button(
             label="Download Vision",
@@ -49,6 +50,9 @@ elif page == "12 Week Goals & Tactics":
 elif page == "Weekly Plans":
     st.title("Weekly Plans")
 
+    # Add input for week number
+    week_number = st.number_input("Enter the Week Number (1-12)", min_value=1, max_value=12, step=1)
+
     # Upload JSON file
     uploaded_file = st.file_uploader("Upload your 12 Week Plan JSON file", type="json")
     
@@ -66,3 +70,23 @@ elif page == "Weekly Plans":
                 if tactic:  # Check if tactic text is not empty
                     is_checked = st.checkbox(tactic, key=f"{goal_key}_{tactic}")
                     checked_tactics[goal_key].append((tactic, is_checked))
+        
+        # Display week number as part of the data export
+        if st.button("Save Weekly Plan"):
+            weekly_plan_data = {
+                "Week": week_number,
+                "Goals": {}
+            }
+            for goal_key, tactics in checked_tactics.items():
+                weekly_plan_data["Goals"][goal_key] = {
+                    "Goal": plan_data[goal_key]["Goal"],
+                    "Tactics": [{"Tactic": tactic, "Completed": completed} for tactic, completed in tactics]
+                }
+            
+            st.json(weekly_plan_data)
+            st.download_button(
+                label="Download Weekly Plan as JSON",
+                data=json.dumps(weekly_plan_data, indent=4),
+                file_name=f"weekly_plan_week_{week_number}.json",
+                mime="application/json"
+            )
