@@ -53,32 +53,43 @@ elif page == "Weekly Plans":
     if uploaded_file:
         plan_data = json.load(uploaded_file)
         
-        # Display each goal with tactics as checkboxes
-        checked_tactics = {}
+        # Initialize session state for checkboxes if not already initialized
+        if "checked_tactics" not in st.session_state:
+            st.session_state.checked_tactics = {goal_key: [False] * len(goal_content["Tactics"])
+                                                for goal_key, goal_content in plan_data.items()}
+        
+        # Display each goal with tactics as checkboxes, using session state for persistence
         for goal_key, goal_content in plan_data.items():
             st.subheader(goal_content["Goal"])
             tactics = goal_content["Tactics"]
-            checked_tactics[goal_key] = []
             
-            for tactic in tactics:
-                if tactic:  # Check if tactic text is not empty
-                    is_checked = st.checkbox(tactic, key=f"{goal_key}_{tactic}")
-                    checked_tactics[goal_key].append((tactic, is_checked))
-        
-        # Convert the weekly plan to HTML format for better visualization
-        if st.button("Save Weekly Plan"):
-            html_content = f"<h2>Weekly Plan for Week {week_number}</h2>\n"
-            for goal_key, tactics in checked_tactics.items():
-                html_content += f"<h3>{plan_data[goal_key]['Goal']}</h3>\n<ul>"
-                for tactic, completed in tactics:
-                    checkmark = "&#10003;" if completed else "&#10007;"
-                    html_content += f"<li>{checkmark} {tactic}</li>"
-                html_content += "</ul>"
+            for idx, tactic in enumerate(tactics):
+                if tactic:  # Only display non-empty tactics
+                    # Each checkbox is tied to session state
+                    st.session_state.checked_tactics[goal_key][idx] = st.checkbox(
+                        tactic,
+                        key=f"{goal_key}_{idx}",
+                        value=st.session_state.checked_tactics[goal_key][idx]
+                    )
 
-            # Provide the HTML content as a downloadable file
+        # Display and save checked status as a JSON file for progress tracking
+        if st.button("Save Weekly Plan with Checkboxes"):
+            weekly_plan_data = {
+                "Week": week_number,
+                "Goals": {}
+            }
+            for goal_key, tactics in st.session_state.checked_tactics.items():
+                weekly_plan_data["Goals"][goal_key] = {
+                    "Goal": plan_data[goal_key]["Goal"],
+                    "Tactics": [
+                        {"Tactic": plan_data[goal_key]["Tactics"][i], "Completed": status}
+                        for i, status in enumerate(tactics)
+                    ]
+                }
+            
             st.download_button(
-                label="Download Weekly Plan as HTML",
-                data=html_content,
-                file_name=f"weekly_plan_week_{week_number}.html",
-                mime="text/html"
+                label="Download Weekly Plan with Progress as JSON",
+                data=json.dumps(weekly_plan_data, indent=4),
+                file_name=f"weekly_plan_week_{week_number}.json",
+                mime="application/json"
             )
