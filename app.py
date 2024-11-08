@@ -29,9 +29,9 @@ elif page == "12 Week Goals & Tactics":
         col1, col2 = st.columns(2)  # Two columns for tactic and due
         
         with col1:
-            tactic_1 = st.text_area(f"Tactic #1 to Achieve Goal {i}", key=f"tactic_{i}_1")
-            tactic_2 = st.text_area(f"Tactic #2 to Achieve Goal {i}", key=f"tactic_{i}_2")
-            tactic_3 = st.text_area(f"Tactic #3 to Achieve Goal {i}", key=f"tactic_{i}_3")
+            tactic_1 = st.text_input(f"Tactic #1 to Achieve Goal {i}", key=f"tactic_{i}_1")
+            tactic_2 = st.text_input(f"Tactic #2 to Achieve Goal {i}", key=f"tactic_{i}_2")
+            tactic_3 = st.text_input(f"Tactic #3 to Achieve Goal {i}", key=f"tactic_{i}_3")
         
         with col2:
             # Dropdown menu for Due (week)
