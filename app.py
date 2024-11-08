@@ -42,7 +42,7 @@ elif page == "12 Week Goals & Tactics":
             due_3 = st.selectbox(f"Due for Tactic #3 of Goal {i}", due_options, key=f"due_{i}_3")
 
         # You can store the data in `goals_data` or process it as needed
-        goals_data[i] = {
+        goals_data[f"goal_{i}"] = {
             'goal': goal,
             'tactics': [
                 {'tactic': tactic_1, 'due': due_1},
@@ -59,7 +59,6 @@ elif page == "12 Week Goals & Tactics":
         )
 
 
-
 elif page == "Weekly Plans":
     st.title("Create Weekly Plan")
 
@@ -72,11 +71,8 @@ elif page == "Weekly Plans":
         plan_data = json.loads(uploaded_file.read())
         
         # Input for week number
-        
-        
-        # Loop through goals and their tactics
         for goal_id, goal_data in plan_data.items():
-            st.subheader(f"Goal {goal_id}: {goal_data['goal']}")
+            st.subheader(f"{goal_data['goal']}")
             
             # Filter tactics based on week number or "each week"
             for tactic in goal_data["tactics"]:
