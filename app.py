@@ -83,7 +83,7 @@ elif page == "Weekly Plans":
     
     if uploaded_file is not None:
         # Read and parse the uploaded JSON
-        st.write(f'Plan for Week {week_number}')
+        st.title(f'Plan for Week {week_number}')
         plan_data = json.loads(uploaded_file.read())
         
         # Input for week number
